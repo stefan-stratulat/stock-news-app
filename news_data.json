@@ -1,0 +1,19 @@
+{
+    "status": "ok",
+    "totalResults": 1,
+    "articles": [
+        {
+            "source": {
+                "id": "reuters",
+                "name": "Reuters"
+            },
+            "author": "Joseph White",
+            "title": "Tesla wants to start building a new U.S. vehicle plant this summer",
+            "description": "Electric vehicle maker Tesla Inc wants to start building a large vehicle assembly plant in the southwestern United States as early as the third quarter of this year, the company told Texas officials in documents made public this week.",
+            "url": "http://feeds.reuters.com/~r/reuters/topNews/~3/yYIo7jgUc8w/tesla-wants-to-start-building-a-new-u-s-vehicle-plant-this-summer-idUSKBN23P37Y",
+            "urlToImage": "https://s2.reutersmedia.net/resources/r/?m=02&d=20200618&t=2&i=1522741809&w=1200&r=LYNXMPEG5H27B",
+            "publishedAt": "2020-06-18T18:28:11Z",
+            "content": "DETROIT (Reuters) - Electric vehicle maker Tesla Inc (TSLA.O) wants to start building a large vehicle assembly plant in the southwestern United States as early as the third quarter of this year, the \u2026 [+1632 chars]"
+        }
+    ]
+}
