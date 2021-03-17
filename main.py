@@ -1,47 +1,64 @@
 import requests
 import json
 import datetime as dt
+import os
 
 STOCK = "TSLA"
-COMPANY_NAME = "Tesla Inc"
+COMPANY_NAME = "Tesla"
 
-## STEP 1: Use https://www.alphavantage.co
-# When STOCK price increase/decreases by 5% between yesterday and the day before yesterday then print("Get News").
+## STEP 1: Use https://www.alphavantage.co to gather data for yesterday and day before.
 
-api_alphavantage = "1RW6YMYHZGZWPW62"
-
-parameters = {
+#parameters for stock API
+stock_parameters = {
     "function": "TIME_SERIES_DAILY",
     "symbol": STOCK,
     "outputsize": "compact",
-    "apikey": api_alphavantage
+    "apikey": os.environ["API_ALPHAVANTAGE"]
 }
 
-response = requests.get('https://www.alphavantage.co/query', params=parameters)
-response.raise_for_status
+stock_response = requests.get('https://www.alphavantage.co/query', params=stock_parameters)
+stock_response.raise_for_status
 
-# with open("data.json", "w") as json_file:
-#     json.dump(response.json(), json_file)
+#write data to json for analysis
+with open("stock_data.json", "w") as json_file:
+     json.dump(stock_response.json(), json_file)
 
+#calculate the date for yesterday and day before yesterday
 yesterday = dt.date.today() - dt.timedelta(days = 1)
-before_yesterday =dt.date.today() - dt.timedelta(days = 2)
+before_yesterday = dt.date.today() - dt.timedelta(days = 2)
 
-yesterday_closing_price = float(response.json()['Time Series (Daily)'][str(yesterday)]["4. close"])
-before_yesterday_closing_price = float(response.json()['Time Series (Daily)'][str(before_yesterday)]["4. close"])
+#getting the closing prices for each day we need
+yesterday_closing_price = float(stock_response.json()['Time Series (Daily)'][str(yesterday)]["4. close"])
+before_yesterday_closing_price = float(stock_response.json()['Time Series (Daily)'][str(before_yesterday)]["4. close"])
 
-increase = round(((yesterday_closing_price/before_yesterday_closing_price)*100),2)
-print(increase)
+#calculate the price difference between the days as percentage, up to the 2 decimals
+price_diff = round(((yesterday_closing_price/before_yesterday_closing_price)*100),2)
 
-if abs(100-increase) >=4:
-    print("Print News")
+## STEP 2: Use https://newsapi.org get the first 3 news pieces for the COMPANY_NAME
+# if the price difference is higher than 4.
 
-## STEP 2: Use https://newsapi.org
-# Instead of printing ("Get News"), actually get the first 3 news pieces for the COMPANY_NAME.
+news_parameters = {
+    'apiKey': os.environ["API_NEWS"],
+    "q": (COMPANY_NAME, STOCK)
+}
 
+news_response = requests.get("https://newsapi.org/v2/top-headlines", params=news_parameters)
+news_response.raise_for_status
+
+with open("news_data.json", "w") as json_file:
+     json.dump(news_response.json(), json_file)
+
+top_news = news_response.json()["articles"][:3]
+
+if abs(100-price_diff) >=4:
+    for news in top_news:
+        title = news["title"]
+        source_name = news["source"]["name"]
+        print(f"{source_name}: {title}")
 
 
 ## STEP 3: Use https://www.twilio.com
-# Send a seperate message with the percentage change and each article's title and description to your phone number. 
+# Send a seperate message with the percentage change and each article's title and description to your phone number.
 
 
 #Optional: Format the SMS message like this: 
